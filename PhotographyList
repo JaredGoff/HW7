@@ -1,0 +1,99 @@
+package HW7;
+
+import java.util.ArrayList;
+import java.util.Objects;
+
+/**
+ * This class holds the algorithm to create a list of Landmarks that can be photographed given a list of Landmarks.
+ * 
+ * @author Jared Goff
+ * @version 2.0
+ */
+public class PhotographyList
+{
+  /**
+   * Creates a list of Landmarks that can be photographed from a list of potentially conflicting landmarks.
+   * @param landmarkList  An ArrayList of Landmarks to be sorted through and turned into a list of Landmarks to photograph.
+   * @return  Returns an ArrayList of Landmarks whose start and end times don't conflict and whose priority is the greatest possible sum of the priorities of the Landmarks in landmarkList.
+   */
+  public ArrayList<Landmark> createPhotographyList(ArrayList<Landmark> landmarkList)
+  {
+    ArrayList<Landmark> photographyList = new ArrayList<Landmark>(landmarkList.size());
+    for(int i = 0; i <= landmarkList.size(); i++)
+    {
+      if(!photographyList.contains(landmarkList.get(i)))
+      {
+        minimizeConflict(landmarkList.get(i), landmarkList.get(i + 1), landmarkList, photographyList);
+      }
+    }
+    return photographyList;
+  }
+  
+  /**
+   * Creates a new ArrayList of Landmarks.  If the two input Landmarks don't conflict, the first Landmark is added to that ArrayList.  If the two Landmarks do conflict, their priorities and those of Landmarks later in the list are compared, and
+   * the final list is added to that ArrayList.  Then, the ArrayList created by this routine is added to the list of Landmarks to be photographed.
+   * @param firstLandmark  The first Landmark to check for conflict.
+   * @param secondLandmark  The second Landmark to check for conflict.
+   * @param landmarkList  The list of Landmarks to take Landmarks from.
+   * @param photographyList  The list of Landmarks to be photographed.
+   * @exception  java.lang.NullPointerException  If either Landmark argument is null.
+   */
+  public void minimizeConflict(Landmark firstLandmark, Landmark secondLandmark, ArrayList<Landmark> landmarkList, ArrayList<Landmark> photographyList)
+  {
+    firstLandmark = Objects.requireNonNull(firstLandmark);
+    secondLandmark = Objects.requireNonNull(secondLandmark);
+    ArrayList<Landmark> minimumConflict = new ArrayList<Landmark>(landmarkList.size());
+    if(firstLandmark.conflictsWith(secondLandmark))
+    {
+      minimumConflict = comparePriority(firstLandmark, secondLandmark, landmarkList);
+    }
+    else
+    {
+      minimumConflict.add(firstLandmark);
+    }
+    photographyList.addAll(minimumConflict);
+  }
+  
+  /**
+   * Creates an ArrayList for each input Landmark consisting of the Landmarks that don't conflict with them, then returns the list with the higher total priority.
+   * @param  firstLandmark  The Landmark at the start of the first list.
+   * @param  secondLandmark  The Landmark at the start of the second list.
+   * @param  landmarkList  The list of Landmarks to be compared to the two input Landmarks.
+   * @return  The list of Landmarks with the higher total priority.
+   */
+  public ArrayList<Landmark> comparePriority(Landmark firstLandmark, Landmark secondLandmark, ArrayList<Landmark> landmarkList)
+  {
+    ArrayList<Landmark> list1 = new ArrayList<Landmark>(landmarkList.size());
+    ArrayList<Landmark> list2 = new ArrayList<Landmark>(landmarkList.size());
+    int priority1 = firstLandmark.getPriority();
+    int priority2 = secondLandmark.getPriority();
+    for(int z = landmarkList.indexOf(secondLandmark) + 1; z < landmarkList.size(); z++)
+    {
+      addToList(landmarkList.get(z), firstLandmark, list1, priority1);
+      addToList(landmarkList.get(z), secondLandmark, list2, priority2);
+    }
+    if(priority1 < priority2)
+    {
+      return list2;
+    }
+    return list1;
+  }
+  
+  /**
+   * If the two input Landmarks don't conflict, adds the first Landmark to the input list, then adds the priority of the input Landmark to the total priority of the list.
+   * @param landmarkToAdd  The Landmark to potentially be added to the list of Landmarks.
+   * @param baseOfList  The first Landmark in the list of Landmarks.
+   * @param list  The list of Landmarks to be added to.
+   * @param priorityOfList  The total priority of the list of Landmarks.
+   * @@exception  java.lang.NullPointerException  If the Landmark to be added is null.
+   */
+  public void addToList(Landmark landmarkToAdd, Landmark baseOfList, ArrayList<Landmark> list, int priorityOfList)
+  {
+    landmarkToAdd = Objects.requireNonNull(landmarkToAdd);
+    if(!landmarkToAdd.conflictsWith(baseOfList))
+    {
+      list.add(landmarkToAdd);
+      priorityOfList = priorityOfList + landmarkToAdd.getPriority();
+    }
+  }
+}
