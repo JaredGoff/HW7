@@ -1,0 +1,74 @@
+package HW7;
+
+import java.util.Objects;
+
+/**
+ * This class represents a single Landmark that can be photographed.
+ * 
+ * @author Jared Goff
+ * @version 2.0
+ */
+
+public class Landmark
+{
+  /** Holds the time at which the ideal lighting condition for this Landmark begins. */
+  private int startTime;
+  
+  /** Holds the time at which the ideal lighting condition for this Landmark ends. */
+  private int endTime;
+  
+  /** Holds the priority of this Landmark. */
+  private int priority;
+  
+  /**
+   * Creates a new Landmark object with an input start time, end time, and priority.
+   * @param startTime  The Landmark's start time.
+   * @param endTime  The Landmark's end time.
+   * @param priority  The Landmark's priority.
+   */
+  public Landmark(int startTime, int endTime, int priority)
+  {
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.priority = priority;
+  }
+  
+  /**
+   * Returns the Landmark's start time.
+   * @return  The Landmark's start time.
+   */
+  public int getStartTime()
+  {
+    return startTime;
+  }
+  
+  /**
+   * Returns the Landmark's end time.
+   * @return  The Landmark's end time.
+   */
+  public int getEndTime()
+  {
+    return endTime;
+  }
+  
+  /**
+   * Returns the Landmark's priority.
+   * @return  The Landmark's priority.
+   */
+  public int getPriority()
+  {
+    return priority;
+  }
+  
+  /**
+   * Checks whether this Landmark's times conflict with those of another.
+   * @param landmark  The Landmark to compare to this one.
+   * @return  Returns true if the two Landmarks' times conflict.  Returns false if they do not.
+   * @exception  java.lang.NullPointerException  If the argument is null.
+   */
+  public boolean conflictsWith(Landmark landmark)
+  {
+    landmark = Objects.requireNonNull(landmark);
+    return ((getStartTime() <= landmark.getStartTime() && landmark.getStartTime() <= getEndTime()) || (landmark.getStartTime() <= getStartTime() && getStartTime() <= landmark.getEndTime())); 
+  }
+}
